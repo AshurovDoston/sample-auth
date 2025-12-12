@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-Django 6.0 authentication project with custom user registration and profile management. Uses SQLite database and includes two main apps: `accounts` (authentication) and `home` (main content).
+Django 6.0 authentication project with custom user model extending AbstractUser. Uses SQLite database and includes two main apps: `accounts` (custom authentication with UserProfile model) and `home` (main content).
 
 ## Development Commands
 
@@ -66,14 +66,20 @@ The project uses a hierarchical URL structure defined in `django_project/urls.py
 
 Note: Both `accounts.urls` and `django.contrib.auth.urls` are included under `/accounts/` path.
 
-### User Profile System
-The project extends Django's built-in User model using a separate UserProfile model with a OneToOneField relationship rather than extending AbstractUser. This allows adding custom fields (like age) without replacing the User model.
+### Custom User Model
+The project uses a custom user model (`UserProfile`) that extends `AbstractUser`. This is configured via `AUTH_USER_MODEL = "accounts.UserProfile"` in settings.
+
+**IMPORTANT**: This project replaces Django's default User model entirely. Do not use `django.contrib.auth.models.User` directly.
+
+Custom fields added to UserProfile:
+- `age` - PositiveIntegerField (optional)
+- `phone` - CharField max_length=15 (optional)
 
 Custom signup flow:
 1. CustomUserCreationForm extends Django's UserCreationForm
-2. Form includes additional age field not in base User model
-3. On save, creates both User and linked UserProfile instances
-4. UserProfile stores the age field
+2. Form's Meta.model points to UserProfile (not User)
+3. Includes fields: email, username, age, first_name, last_name, phone, password1, password2
+4. Creates UserProfile instance directly (no separate profile creation needed)
 
 ### Authentication Configuration
 - `LOGIN_REDIRECT_URL = "/"` - redirects to home after login
@@ -90,15 +96,24 @@ Templates stored at project root in `templates/` directory:
 
 Settings configured with `DIRS: [BASE_DIR / "templates"]` to use project-level templates directory.
 
+### Admin Configuration
+The UserProfile model is registered in Django admin with a custom admin class that extends `UserAdmin`:
+- Adds custom fieldsets for age and phone fields
+- Custom fieldsets labeled "Qo'shimcha Info" (Additional Info in Uzbek) and "Additional Info"
+- Displays age and phone in list view
+
 ### Environment Configuration
 - Uses python-decouple for environment variables (`.env` file exists)
 - DEBUG setting loaded from environment with `config("DEBUG", default=True, cast=bool)`
-- SECRET_KEY currently hardcoded (should be moved to .env for production)
+- SECRET_KEY currently hardcoded in settings.py (should be moved to .env for production)
+- Current .env only contains: `DEBUG = True`
 
 ## Important Notes
 
+- **Custom User Model**: Uses `AUTH_USER_MODEL = "accounts.UserProfile"` - migrations must be run from start, cannot switch mid-project
 - Database: SQLite (db.sqlite3)
 - Python version: 3.13 (based on .venv)
 - Django version: 6.0
 - `ALLOWED_HOSTS = ["*"]` - should be restricted for production
 - Static files configured but no static directory currently exists in project root
+- Repository has two branches: `main` and `develop`
