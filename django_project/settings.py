@@ -21,13 +21,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "django-insecure-paw%5lw+zpma5f6hy-w)-28(=dmzknjv6^$0(9)1g1fwfe&1ti"
+SECRET_KEY = config("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config("DEBUG", default=True, cast=bool)
 
-ALLOWED_HOSTS = ["*"]
-
+ALLOWED_HOSTS = config("ALLOWED_HOSTS", default="127.0.0.1", cast=lambda v: [s.strip() for s in v.split(",")])
 
 # Application definition
 
@@ -118,7 +117,8 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
 
 STATIC_URL = "static/"
+STATICFILES_DIRS = [BASE_DIR / "static"]
 
 LOGIN_REDIRECT_URL = "/"
-LOGOUT_REDIRECT_URL = "/"
+LOGOUT_REDIRECT_URL = "logout"
 AUTH_USER_MODEL = "accounts.UserProfile" # why to use this line? To specify a custom user model instead of the default Django User model.

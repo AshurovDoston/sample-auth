@@ -3,15 +3,25 @@
 <html>
 <head>
     <title>{% block title %}Django Project{% endblock %}</title>
-    <link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/base.css' %}">
 </head>
 <body>
+    <!-- Navigation Bar -->
     <nav>
-        <a href="{% url 'home' %}">Django Project</a>
-        <div>
-            <a href="{% url 'login' %}">Login</a> |
-            <a href="{% url 'signup' %}">Sign Up</a>
+        <h1><a href="{% url 'home' %}">To Do App</a></h1>
 
+        <div class="user-info">
+            {% if user.is_authenticated %}
+                <span>Hello {{ user.username }}</span>
+                <form method="post" action="{% url 'logout' %}" style="display: inline;">
+                    {% csrf_token %}
+                    <button type="submit" class="logout-btn">Logout</button>
+                </form>
+            {% else %}
+                <span>You are not logged in.</span>
+                <a href="{% url 'login' %}">Login</a> |
+                <a href="{% url 'signup' %}">Sign Up</a>
+            {% endif %}
         </div>
     </nav>
 

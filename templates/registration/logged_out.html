@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Logged Out - To Do App{% endblock %}
+
+{% block content %}
+<link rel="stylesheet" type="text/css" href="{% static 'css/reg.css' %}">
+
+<div class="container text-center">
+    <h1>You've been logged out</h1>
+    <p class="logout-message">
+        Thanks for using To Do App! You have been successfully logged out.
+    </p>
+
+    <div class="logout-actions">
+        <a href="{% url 'login' %}" class="btn">Log in again</a>
+        <a href="{% url 'home' %}" class="btn btn-secondary">Go to Home</a>
+    </div>
+</div>
+{% endblock %}
