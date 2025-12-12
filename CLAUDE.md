@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-Django 6.0 authentication project with custom user model extending AbstractUser. Uses SQLite database and includes two main apps: `accounts` (custom authentication with UserProfile model) and `home` (main content).
+Django 6.0 To Do App with custom user authentication system. Features a custom user model extending AbstractUser, modern purple gradient UI, and organized static file structure. Uses SQLite database with two main apps: `accounts` (authentication) and `home` (landing page).
 
 ## Development Commands
 
@@ -84,17 +84,32 @@ Custom signup flow:
 ### Authentication Configuration
 - `LOGIN_REDIRECT_URL = "/"` - redirects to home after login
 - `LOGOUT_REDIRECT_URL = "/"` - redirects to home after logout
-- Uses Django's built-in authentication views for login/logout
+- Uses Django's built-in authentication views for login/logout/password management
 - Custom signup view in accounts app
+- **Logout requires POST**: Django 6.0 security - logout button uses form with CSRF token, not a link
+- Navigation bar shows user status: authenticated users see username + logout button, guests see login/signup links
 
-### Template Organization
-Templates stored at project root in `templates/` directory:
-- `base.html` - Base template (likely contains common layout)
-- `home.html` - Home page template
+### Template & Static File Organization
+
+**Templates** stored at project root in `templates/` directory:
+- `base.html` - Base template with navigation, loads base.css
+- `home.html` - Home page (authenticated: task section, guest: landing page)
 - `registration/login.html` - Login form
-- `registration/signup.html` - Custom signup form
+- `registration/signup.html` - User registration form
+- `registration/logged_out.html` - Logout confirmation page
 
-Settings configured with `DIRS: [BASE_DIR / "templates"]` to use project-level templates directory.
+**Static Files** organized in `static/css/`:
+- `base.css` - Global styles (navigation, forms, buttons, cards, utility classes)
+- `reg.css` - Registration pages only (login, signup, logged_out)
+- `home.css` - Home page specific styles
+
+**CSS Architecture:**
+- Each template loads base.css automatically via base.html
+- Page-specific CSS loaded via `{% load static %}` and `<link>` tag in content block
+- Uses CSS variables (`:root`) for theming: --primary-color, --secondary-color, etc.
+- Purple gradient color scheme with modern card-based layouts
+
+Settings: `STATICFILES_DIRS = [BASE_DIR / "static"]` and `DIRS: [BASE_DIR / "templates"]`
 
 ### Admin Configuration
 The UserProfile model is registered in Django admin with a custom admin class that extends `UserAdmin`:
@@ -108,12 +123,26 @@ The UserProfile model is registered in Django admin with a custom admin class th
 - SECRET_KEY currently hardcoded in settings.py (should be moved to .env for production)
 - Current .env only contains: `DEBUG = True`
 
+### UI/UX Design Pattern
+The app uses different views for authenticated vs. guest users on the home page:
+
+**Authenticated Users:**
+- Personalized welcome message with username
+- Task management section (placeholder for future functionality)
+- "Add New Task" button
+
+**Guest Users:**
+- Landing page with app description
+- Call-to-action buttons ("Get Started", "Login")
+- Feature list highlighting app benefits
+
 ## Important Notes
 
 - **Custom User Model**: Uses `AUTH_USER_MODEL = "accounts.UserProfile"` - migrations must be run from start, cannot switch mid-project
+- **Logout POST Requirement**: In Django 6.0+, logout must use POST method for security (implemented with form + CSRF token)
+- **CSS Organization**: NO inline styles in templates - all styling in separate CSS files
 - Database: SQLite (db.sqlite3)
 - Python version: 3.13 (based on .venv)
 - Django version: 6.0
 - `ALLOWED_HOSTS = ["*"]` - should be restricted for production
-- Static files configured but no static directory currently exists in project root
 - Repository has two branches: `main` and `develop`

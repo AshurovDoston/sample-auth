@@ -1,16 +1,45 @@
 {% extends "base.html" %}
+{% load static %}
+
+{% block title %}Home - To Do App{% endblock %}
 
 {% block content %}
+<link rel="stylesheet" type="text/css" href="{% static 'css/home.css' %}">
 
-<body>
+<div class="container text-center">
     {% if user.is_authenticated %}
-        <h1>Welcome {{ user.username }} to the Home Page</h1>
-    {% else %}
-        <h1>Welcome Guest to the Home Page</h1>
-    {% endif %}
-    <h2>{{ latest_question_list }}</h2>
-    <h3>{{ my_variable }}</h3>
-    <p>This is a simple Django application home page.</p>
-</body>
+        <h1>Welcome back, {{ user.username }}!</h1>
+        <p class="home-subtitle">
+            Ready to organize your day?
+        </p>
 
+        <div class="card task-card">
+            <h3>Your Tasks</h3>
+            <p class="task-card-description">
+                Start adding tasks to stay productive
+            </p>
+            <button class="btn mt-2">Add New Task</button>
+        </div>
+
+    {% else %}
+        <h1>Organize Your Life</h1>
+        <p class="home-subtitle">
+            A simple and elegant way to manage your tasks
+        </p>
+
+        <div class="home-cta">
+            <a href="{% url 'signup' %}" class="btn">Get Started</a>
+            <a href="{% url 'login' %}" class="btn btn-secondary">Login</a>
+        </div>
+
+        <div class="card features-card">
+            <h3>Why To Do App?</h3>
+            <ul class="features-list">
+                <li>✓ Simple and intuitive interface</li>
+                <li>✓ Stay organized and productive</li>
+                <li>✓ Access your tasks anywhere</li>
+            </ul>
+        </div>
+    {% endif %}
+</div>
 {% endblock %}

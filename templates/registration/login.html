@@ -1,13 +1,25 @@
 {% extends "base.html" %}
+{% load static %}
 
-{% block title %}Login{% endblock %}
+{% block title %}Login - To Do App{% endblock %}
 
 {% block content %}
-<h2>Login</h2>
-<form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Login</button>
-</form>
+<link rel="stylesheet" type="text/css" href="{% static 'css/reg.css' %}">
 
+<div class="container auth-container">
+    <h2 class="text-center">Welcome Back</h2>
+    <p class="text-center auth-subtitle">
+        Sign in to manage your tasks
+    </p>
+
+    <form method="post" class="auth-form">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Login</button>
+    </form>
+
+    <p class="text-center mt-3 auth-footer">
+        Don't have an account? <a href="{% url 'signup' %}">Sign up</a>
+    </p>
+</div>
 {% endblock %}

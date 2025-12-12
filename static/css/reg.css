@@ -1,0 +1,33 @@
+/* Registration Pages Styles (Login, Signup, Logout) */
+
+.auth-container {
+    max-width: 450px;
+    margin: 3rem auto;
+}
+
+.auth-subtitle {
+    color: var(--text-secondary);
+    margin-bottom: 2rem;
+}
+
+.auth-form button[type="submit"] {
+    width: 100%;
+}
+
+.auth-footer {
+    color: var(--text-secondary);
+}
+
+/* Logged out page specific styles */
+.logout-message {
+    color: var(--text-secondary);
+    font-size: 1.1rem;
+    margin: 1.5rem 0;
+}
+
+.logout-actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    margin-top: 2rem;
+}
