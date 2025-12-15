@@ -15,10 +15,41 @@
 
         <div class="card task-card">
             <h3>Your Tasks</h3>
-            <p class="task-card-description">
-                Start adding tasks to stay productive
-            </p>
-            <button class="btn mt-2">Add New Task</button>
+
+            {% if tasks %}
+                <ul class="task-list">
+                    {% for task in tasks %}
+                        <li class="task-item {% if task.completed %}completed{% endif %}">
+                            <div class="task-item-content">
+                                <div class="task-item-text">
+                                    <h4 class="task-item-title {% if task.completed %}completed{% endif %}">
+                                        {{ task.title }}
+                                    </h4>
+                                    {% if task.description %}
+                                        <p class="task-item-description">
+                                            {{ task.description }}
+                                        </p>
+                                    {% endif %}
+                                    <small class="task-item-date">
+                                        Created: {{ task.created_at|date:"M d, Y" }}
+                                    </small>
+                                </div>
+                                <span class="task-status-badge {% if task.completed %}completed{% else %}pending{% endif %}">
+                                    {% if task.completed %}✓ Done{% else %}Pending{% endif %}
+                                </span>
+                            </div>
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p class="empty-tasks-message">
+                    You haven't created any tasks yet. Start adding tasks to stay productive!
+                </p>
+            {% endif %}
+
+            <a href="{% url 'task_create' %}" class="btn mt-2">
+                ✓ Add New Task
+            </a>
         </div>
 
     {% else %}

@@ -120,5 +120,6 @@ STATIC_URL = "static/"
 STATICFILES_DIRS = [BASE_DIR / "static"]
 
 LOGIN_REDIRECT_URL = "/"
-LOGOUT_REDIRECT_URL = "logout"
+LOGOUT_REDIRECT_URL = "/accounts/logout/"
+LOGIN_URL = "/accounts/login/"  # Where to redirect if @login_required fails
 AUTH_USER_MODEL = "accounts.UserProfile" # why to use this line? To specify a custom user model instead of the default Django User model.

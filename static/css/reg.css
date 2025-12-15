@@ -31,3 +31,24 @@
     justify-content: center;
     margin-top: 2rem;
 }
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+    .auth-container {
+        margin: 2rem auto;
+        padding: 0 1rem;
+    }
+
+    .logout-actions {
+        flex-direction: column;
+        width: 100%;
+    }
+
+    .logout-actions .btn {
+        width: 100%;
+    }
+
+    .logout-message {
+        font-size: 1rem;
+    }
+}
