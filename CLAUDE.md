@@ -65,6 +65,10 @@ The project uses a hierarchical URL structure defined in `django_project/urls.py
 - `/accounts/` → Custom signup view (accounts.urls) + built-in auth views (login, logout, password management)
 - `/` → Home page (home.urls)
 - `/tasks/create/` → Task creation form (home.urls)
+- `/tasks/<int:pk>/edit/` → Task edit form (home.urls)
+- `/tasks/<int:pk>/delete/` → Task delete confirmation (home.urls)
+
+**URL Parameters**: `<int:pk>` captures task ID from URL and passes to view as `pk` argument.
 
 Note: Both `accounts.urls` and `django.contrib.auth.urls` are included under `/accounts/` path.
 
@@ -100,14 +104,24 @@ Custom signup flow:
 **Task Views** (`home/views.py`):
 - `home_view`: Shows task list for authenticated users, landing page for guests
 - `task_create_view`: Handles task creation with `@login_required` decorator
+- `task_update_view`: Handles task editing with pre-populated form
+- `task_delete_view`: Shows confirmation page before deleting task
+- All views use `get_object_or_404(Task, pk=pk, user=request.user)` for security
 - Uses `request.user.tasks.all()` to get user-specific tasks (via related_name)
 
-**Key Pattern**:
+**CRUD Patterns**:
 ```python
-# In view:
-task = form.save(commit=False)  # Create object without saving
-task.user = request.user        # Set user field
-task.save()                     # Save to database
+# CREATE: Set user before saving
+task = form.save(commit=False)
+task.user = request.user
+task.save()
+
+# UPDATE: Use instance parameter
+form = TaskForm(request.POST, instance=task)
+form.save()  # Updates existing task
+
+# DELETE: Simple delete call
+task.delete()
 ```
 
 ### Authentication Configuration
@@ -123,24 +137,27 @@ task.save()                     # Save to database
 
 **Templates** stored at project root in `templates/` directory:
 - `base.html` - Base template with navigation, loads base.css
-- `home.html` - Home page (authenticated: task list, guest: landing page)
+- `home.html` - Home page (authenticated: task list with edit/delete buttons, guest: landing page)
 - `task_create.html` - Task creation form
+- `task_update.html` - Task edit form (pre-populated with task data)
+- `task_delete.html` - Task delete confirmation page
 - `registration/login.html` - Login form
 - `registration/signup.html` - User registration form
 - `registration/logged_out.html` - Logout confirmation page
 
 **Static Files** organized in `static/css/`:
 - `base.css` - Global styles (navigation, forms, buttons, cards, utility classes)
-- `reg.css` - Registration pages (login, signup, logged_out) and task_create form
-- `home.css` - Home page and task list styles
+- `reg.css` - Registration pages (login, signup, logged_out), task forms (create, update, delete)
+- `home.css` - Home page, task list, edit/delete button styles
 
 **CSS Architecture:**
 - Each template loads base.css automatically via base.html
 - Page-specific CSS loaded via `{% load static %}` and `<link>` tag in content block
-- Uses CSS variables (`:root`) for theming: --primary-color, --secondary-color, etc.
+- Uses CSS variables (`:root`) for theming: --primary-color, --secondary-color, --danger, etc.
 - Purple gradient color scheme with modern card-based layouts
 - **NO inline styles** - all styling in separate CSS files
-- Task list uses semantic CSS classes: `.task-item`, `.task-status-badge`, etc.
+- Task list uses semantic CSS classes: `.task-item`, `.task-status-badge`, `.task-edit-btn`, `.task-delete-btn`
+- Delete confirmation uses: `.delete-warning`, `.delete-actions`, `.btn-danger`
 
 Settings: `STATICFILES_DIRS = [BASE_DIR / "static"]` and `DIRS: [BASE_DIR / "templates"]`
 
@@ -172,6 +189,7 @@ The app uses different views for authenticated vs. guest users on the home page:
 - Task list displaying all user's tasks
 - Each task shows: title, description (if present), creation date, completion status
 - Visual distinction: completed tasks have green border, pending have purple
+- Action buttons on each task: Edit (purple), Delete (red)
 - "Add New Task" button links to `/tasks/create/`
 
 **Guest Users:**
@@ -197,14 +215,18 @@ The app uses different views for authenticated vs. guest users on the home page:
 - Function-based views (FBV) pattern
 - `@login_required` decorator for protected views
 - GET vs POST request handling
-- `redirect()` after successful form submission (PRG pattern)
+- `redirect()` after successful form submission (PRG pattern - Post/Redirect/Get)
+- `get_object_or_404()` for safe object retrieval with 404 on failure
 - Context dictionary for passing data to templates
+- URL parameters captured with `<int:pk>` and passed as view arguments
 
 **Forms:**
 - ModelForm for automatic form generation from models
 - Custom widgets for HTML attributes
 - Form validation with `is_valid()`
-- `commit=False` pattern for setting additional fields
+- `commit=False` pattern for CREATE (setting user field)
+- `instance=` parameter for UPDATE (pre-populate and update existing object)
+- Same form (TaskForm) used for both create and update views
 
 **Templates:**
 - Template inheritance with `{% extends %}`
@@ -216,9 +238,13 @@ The app uses different views for authenticated vs. guest users on the home page:
 
 - **Custom User Model**: Uses `AUTH_USER_MODEL = "accounts.UserProfile"` - migrations must be run from start, cannot switch mid-project
 - **ForeignKey Reference**: Always use `settings.AUTH_USER_MODEL` when creating ForeignKey to user, not direct User import
+- **Security Pattern**: All task views filter by `user=request.user` to prevent users from accessing others' tasks
 - **Logout POST Requirement**: In Django 6.0+, logout must use POST method for security (implemented with form + CSRF token)
+- **Delete Confirmation**: Delete operations use GET for confirmation page, POST for actual deletion
 - **CSS Organization**: NO inline styles in templates - all styling in separate CSS files
 - **Related Name Pattern**: Access user's tasks via `user.tasks.all()` (uses `related_name='tasks'` in Task model)
+- **URL Naming**: Use `{% url 'name' %}` in templates, never hardcode URLs
+- **Form Reusability**: Same ModelForm (TaskForm) used for both create and update operations
 - Database: SQLite (db.sqlite3)
 - Python version: 3.13 (based on .venv)
 - Django version: 6.0

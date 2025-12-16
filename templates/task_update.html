@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Edit Task - To Do App{% endblock %}
+
+{% block content %}
+<link rel="stylesheet" type="text/css" href="{% static 'css/reg.css' %}">
+
+<div class="container auth-container">
+    <h2 class="text-center">Edit Task</h2>
+    <p class="text-center auth-subtitle">
+        Update "{{ task.title }}"
+    </p>
+
+    {# Same form as create, but Django auto-fills with task data #}
+    <form method="post" class="auth-form">
+        {% csrf_token %}
+
+        {# The form is pre-populated because we passed instance=task in the view #}
+        {{ form.as_p }}
+
+        <button type="submit" class="mt-2">
+            Update Task
+        </button>
+    </form>
+
+    {# Link to cancel and go back #}
+    <p class="text-center mt-3 auth-footer">
+        <a href="{% url 'home' %}">← Cancel</a>
+    </p>
+</div>
+
+{#
+How Django knows to UPDATE instead of CREATE:
+- In view: TaskForm(request.POST, instance=task)
+- The instance=task parameter tells Django to update that task
+- Without instance, Django creates a new task
+#}
+{% endblock %}

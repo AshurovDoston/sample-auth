@@ -31,12 +31,18 @@
                                         </p>
                                     {% endif %}
                                     <small class="task-item-date">
-                                        Created: {{ task.created_at|date:"M d, Y" }}
+                                        Created: {{ task.created_at|date:"M d, Y, h:i" }}
                                     </small>
                                 </div>
-                                <span class="task-status-badge {% if task.completed %}completed{% else %}pending{% endif %}">
-                                    {% if task.completed %}✓ Done{% else %}Pending{% endif %}
-                                </span>
+                                <div class="task-item-actions">
+                                    <span class="task-status-badge {% if task.completed %}completed{% else %}pending{% endif %}">
+                                        {% if task.completed %}✓ Done{% else %}Pending{% endif %}
+                                    </span>
+                                    {# Edit button with task.pk (primary key) passed to URL #}
+                                    {# {% url 'task_update' task.pk %} generates: /tasks/5/edit/ #}
+                                    <a href="{% url 'task_update' task.pk %}" class="task-edit-btn">✏️ Edit</a>
+                                    <a href="{% url 'task_delete' task.pk %}" class="task-delete-btn">🗑️ Delete</a>
+                                </div>
                             </div>
                         </li>
                     {% endfor %}
