@@ -31,3 +31,61 @@
     justify-content: center;
     margin-top: 2rem;
 }
+
+/* Delete confirmation page */
+.delete-warning {
+    background: #fef2f2;
+    border-left: 4px solid var(--danger);
+    padding: 1rem;
+    border-radius: 8px;
+    margin-bottom: 1.5rem;
+}
+
+.delete-warning-text {
+    color: #991b1b;
+    margin: 0;
+    font-weight: 500;
+}
+
+.delete-actions {
+    display: flex;
+    gap: 1rem;
+    margin-top: 1.5rem;
+}
+
+.delete-actions .btn {
+    flex: 1;
+}
+
+.btn-danger {
+    background: var(--danger);
+}
+
+.btn-danger:hover {
+    background: #dc2626;
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+    .auth-container {
+        margin: 2rem auto;
+        padding: 0 1rem;
+    }
+
+    .logout-actions {
+        flex-direction: column;
+        width: 100%;
+    }
+
+    .logout-actions .btn {
+        width: 100%;
+    }
+
+    .logout-message {
+        font-size: 1rem;
+    }
+
+    .delete-actions {
+        flex-direction: column;
+    }
+}

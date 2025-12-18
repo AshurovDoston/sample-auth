@@ -1,7 +1,9 @@
 {% load static %}
-
-<html>
+<!DOCTYPE html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Django Project{% endblock %}</title>
     <link rel="stylesheet" type="text/css" href="{% static 'css/base.css' %}">
 </head>
@@ -19,7 +21,7 @@
                 </form>
             {% else %}
                 <span>You are not logged in.</span>
-                <a href="{% url 'login' %}">Login</a> |
+                <a href="{% url 'login' %}">Login</a>
                 <a href="{% url 'signup' %}">Sign Up</a>
             {% endif %}
         </div>

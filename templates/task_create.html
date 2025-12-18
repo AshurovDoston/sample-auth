@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Create Task - To Do App{% endblock %}
+
+{% block content %}
+<link rel="stylesheet" type="text/css" href="{% static 'css/reg.css' %}">
+
+<div class="container auth-container">
+    <h2 class="text-center">Create New Task</h2>
+    <p class="text-center auth-subtitle">
+        Add a new task to your to-do list
+    </p>
+
+    {# Django form rendering #}
+    <form method="post" class="auth-form">
+        {# CSRF Token: Security feature to prevent Cross-Site Request Forgery #}
+        {# Django requires this for all POST forms #}
+        {% csrf_token %}
+
+        {# form.as_p renders each field wrapped in <p> tags #}
+        {# Django automatically adds: #}
+        {#   - Labels #}
+        {#   - Input fields #}
+        {#   - Error messages #}
+        {#   - Help text #}
+        {{ form.as_p }}
+
+        {# Submit button - width controlled by auth-form button CSS #}
+        <button type="submit" class="mt-2">
+            Create Task
+        </button>
+    </form>
+
+    {# Link to go back to home #}
+    <p class="text-center mt-3 auth-footer">
+        <a href="{% url 'home' %}">← Back to Home</a>
+    </p>
+</div>
+<!-- 
+{# Explanation of what {{ form.as_p }} generates: #}
+{#
+<p>
+    <label for="id_title">Task Title:</label>
+    <input type="text" name="title" maxlength="200" placeholder="Enter task title" required id="id_title">
+    <span class="helptext">What do you need to do?</span>
+</p>
+<p>
+    <label for="id_description">Description:</label>
+    <textarea name="description" cols="40" rows="4" placeholder="Add task description (optional)" id="id_description"></textarea>
+    <span class="helptext">Add any additional details here.</span>
+</p>
+<p>
+    <label for="id_completed">Mark as completed:</label>
+    <input type="checkbox" name="completed" id="id_completed">
+</p>
+#}
+{% endblock %} -->
