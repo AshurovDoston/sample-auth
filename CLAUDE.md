@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-Django 6.0 To Do App with custom user authentication and task management. Features a custom user model extending AbstractUser, modern purple gradient UI, and organized static file structure. Uses SQLite database with two main apps: `accounts` (authentication) and `home` (task management and landing page).
+Django 6.0 To Do App with custom user authentication and task management. Features a custom user model extending AbstractUser, modern purple gradient UI, and organized static file structure. Uses PostgreSQL database with two main apps: `accounts` (authentication) and `home` (task management and landing page).
 
 ## Development Commands
 
@@ -48,7 +48,30 @@ source .venv/bin/activate
 
 # On Windows
 .venv\Scripts\activate
+
+# Install dependencies
+pip install -r requirements.txt
 ```
+
+### PostgreSQL Database Setup
+```bash
+# Make sure PostgreSQL is installed and running
+# The project uses PostgreSQL instead of SQLite
+
+# Create the database (if not exists)
+# psql -U postgres
+# CREATE DATABASE your_db_name;
+
+# After configuring .env with database credentials, run migrations
+python manage.py migrate
+```
+
+**For detailed PostgreSQL migration guide**: See [POSTGRES_GUIDE.md](./POSTGRES_GUIDE.md) for comprehensive step-by-step instructions on:
+- Installing and configuring PostgreSQL
+- Creating database users with proper permissions
+- Migrating from SQLite to PostgreSQL
+- Data transfer and troubleshooting
+- PostgreSQL-specific features and best practices
 
 ## Project Architecture
 
@@ -175,11 +198,45 @@ Settings: `STATICFILES_DIRS = [BASE_DIR / "static"]` and `DIRS: [BASE_DIR / "tem
 - Search: title, description
 - Read-only: created_at, updated_at
 
+### Database Architecture
+
+The project uses **PostgreSQL** as the production database system (migrated from SQLite).
+
+**Database Configuration** (`django_project/settings.py`):
+- Engine: `django.db.backends.postgresql`
+- Adapter: `psycopg` (psycopg3) - PostgreSQL database adapter for Python
+- Configuration loaded from environment variables for security
+
+**Key Benefits**:
+- Multi-user concurrent access
+- Advanced data types and indexing
+- Full-text search capabilities
+- Production-ready scalability
+- User authentication and permissions at database level
+
+**Common PostgreSQL Commands**:
+```bash
+# Connect to database
+psql -U your_user -d your_db_name -h localhost
+
+# Inside psql:
+\l                    # List all databases
+\dt                   # List tables
+\d table_name         # Describe table structure
+\q                    # Exit
+```
+
 ### Environment Configuration
-- Uses python-decouple for environment variables (`.env` file exists)
-- DEBUG setting loaded from environment with `config("DEBUG", default=True, cast=bool)`
-- SECRET_KEY currently hardcoded in settings.py (should be moved to .env for production)
-- Current .env only contains: `DEBUG = True`
+- Uses python-decouple for environment variables (`.env` file required)
+- Required environment variables in `.env`:
+  - `SECRET_KEY` - Django secret key for cryptographic signing
+  - `DEBUG` - Boolean flag (True/False)
+  - `DB_NAME` - PostgreSQL database name
+  - `DB_USER` - PostgreSQL username
+  - `DB_PASSWORD` - PostgreSQL password
+  - `DB_HOST` - Database host (default: localhost)
+  - `DB_PORT` - Database port (default: 5432)
+  - `ALLOWED_HOSTS` - Comma-separated list of allowed hosts (default: 127.0.0.1)
 
 ### UI/UX Design Pattern
 The app uses different views for authenticated vs. guest users on the home page:
@@ -236,17 +293,19 @@ The app uses different views for authenticated vs. guest users on the home page:
 
 ## Important Notes
 
+- **Database Migration**: Project has migrated from SQLite to PostgreSQL. See [POSTGRES_GUIDE.md](./POSTGRES_GUIDE.md) for detailed migration instructions. PostgreSQL must be installed and running, and `.env` file must contain valid database credentials.
 - **Custom User Model**: Uses `AUTH_USER_MODEL = "accounts.UserProfile"` - migrations must be run from start, cannot switch mid-project
 - **ForeignKey Reference**: Always use `settings.AUTH_USER_MODEL` when creating ForeignKey to user, not direct User import
 - **Security Pattern**: All task views filter by `user=request.user` to prevent users from accessing others' tasks
+- **Environment Variables**: Never commit `.env` file or hardcode sensitive data (database passwords, SECRET_KEY). All configuration uses python-decouple.
 - **Logout POST Requirement**: In Django 6.0+, logout must use POST method for security (implemented with form + CSRF token)
 - **Delete Confirmation**: Delete operations use GET for confirmation page, POST for actual deletion
 - **CSS Organization**: NO inline styles in templates - all styling in separate CSS files
 - **Related Name Pattern**: Access user's tasks via `user.tasks.all()` (uses `related_name='tasks'` in Task model)
 - **URL Naming**: Use `{% url 'name' %}` in templates, never hardcode URLs
 - **Form Reusability**: Same ModelForm (TaskForm) used for both create and update operations
-- Database: SQLite (db.sqlite3)
-- Python version: 3.13 (based on .venv)
-- Django version: 6.0
-- `ALLOWED_HOSTS = ["*"]` - should be restricted for production
+- **Database**: PostgreSQL (configured via environment variables)
+- **Python version**: 3.13 (based on .venv)
+- **Django version**: 6.0
+- **Key Dependencies**: psycopg (PostgreSQL adapter), python-decouple (environment config), black (code formatter)
 - Repository has two branches: `main` and `develop`
