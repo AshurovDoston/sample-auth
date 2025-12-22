@@ -124,3 +124,25 @@ def task_delete_view(request, pk):
         'task': task,
     }
     return render(request, 'task_delete.html', context)
+
+@login_required
+def task_toggle_view(request, pk):
+    """
+    Toggle task completion status directly from homepage.
+
+    Security:
+    - Requires login (@login_required)
+    - Filters by user to prevent unauthorized access
+    - POST-only to prevent accidental toggles via GET
+    """
+    # Get task, ensuring it belongs to current user (security)
+    task = get_object_or_404(Task, pk=pk, user=request.user)
+
+    # Only allow POST requests (security best practice)
+    if request.method == 'POST':
+        # Toggle the completed status
+        task.completed = not task.completed
+        task.save()
+
+    # Redirect back to home page
+    return redirect('home')

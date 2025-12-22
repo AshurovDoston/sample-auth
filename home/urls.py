@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import home_view, task_create_view, task_update_view, task_delete_view
+from .views import home_view, task_create_view, task_update_view, task_delete_view, task_toggle_view
 
 urlpatterns = [
     # URL pattern: "" (empty string) means the root URL
@@ -17,4 +17,5 @@ urlpatterns = [
     # In template: {% url 'task_update' task.pk %} generates correct URL
     path("tasks/<int:pk>/edit/", task_update_view, name="task_update"),
     path("tasks/<int:pk>/delete/", task_delete_view, name="task_delete"),
+    path("tasks/<int:pk>/toggle/", task_toggle_view, name="task_toggle"),
 ]
