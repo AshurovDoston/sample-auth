@@ -49,15 +49,30 @@
 }
 
 .task-item {
-    padding: 1rem;
-    background: var(--background);
-    margin-bottom: 0.75rem;
-    border-radius: 8px;
+    position: relative;
+    padding: 1.25rem;
+    padding-top: 1.5rem;
+    background: var(--surface);
+    margin-bottom: 1rem;
+    border-radius: 12px;
     border-left: 4px solid var(--primary-color);
+    box-shadow: var(--shadow-sm);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.task-item:hover {
+    box-shadow: var(--shadow-md);
+    transform: translateY(-2px);
 }
 
 .task-item.completed {
     border-left-color: var(--success);
+    background: var(--background);
+}
+
+.task-item.completed:hover {
+    box-shadow: var(--shadow-sm);
+    transform: translateY(-1px);
 }
 
 .task-item-content {
@@ -71,22 +86,104 @@
     flex: 1;
 }
 
+/* Task Toggle Checkbox Form */
+.task-toggle-form {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    margin-bottom: 0.5rem;
+}
+
+/* Custom Checkbox Styling */
+.task-checkbox {
+    flex-shrink: 0;
+    width: 1.25rem;
+    height: 1.25rem;
+    margin-top: 0.25rem;
+    cursor: pointer;
+    border-radius: 4px;
+    border: 2px solid var(--primary-color);
+    background: var(--surface);
+    transition: all 0.3s ease;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    position: relative;
+}
+
+.task-checkbox:hover {
+    border-color: var(--primary-dark);
+    box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.1);
+}
+
+.task-checkbox:checked {
+    background: var(--success);
+    border-color: var(--success);
+}
+
+.task-checkbox:checked::before {
+    content: '✓';
+    color: white;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-weight: 700;
+    font-size: 0.9rem;
+}
+
+/* Checkbox Label */
+.task-checkbox-label {
+    flex: 1;
+    cursor: pointer;
+    margin: 0;
+}
+
+.task-checkbox-label .task-item-title {
+    margin: 0 0 0.75rem 0;
+    margin-right: 100px;
+}
+
+/* Completed Task - Update checkbox style */
+.task-item.completed .task-checkbox {
+    background: var(--success);
+    border-color: var(--success);
+}
+
 .task-item-actions {
     display: flex;
     flex-direction: column;
-    gap: 0.5rem;
+    justify-content: flex-start;
     align-items: flex-end;
+}
+
+.task-actions-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.375rem;
+    background: var(--background);
+    padding: 0.5rem;
+    border-radius: 8px;
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.05);
+    border: 1px solid var(--border-color);
+}
+
+.task-edit-btn,
+.task-delete-btn {
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    font-size: 0.8125rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    display: block;
+    text-align: center;
+    min-width: 90px;
 }
 
 .task-edit-btn {
     background: var(--primary-color);
-    color: white;
-    padding: 0.4rem 0.75rem;
-    border-radius: 4px;
-    font-size: 0.85rem;
-    text-decoration: none;
-    transition: all 0.3s ease;
-    display: inline-block;
 }
 
 .task-edit-btn:hover {
@@ -95,15 +192,13 @@
     box-shadow: var(--shadow-sm);
 }
 
+.task-edit-btn:focus {
+    outline: 2px solid var(--primary-color);
+    outline-offset: 2px;
+}
+
 .task-delete-btn {
     background: var(--danger);
-    color: white;
-    padding: 0.4rem 0.75rem;
-    border-radius: 4px;
-    font-size: 0.85rem;
-    text-decoration: none;
-    transition: all 0.3s ease;
-    display: inline-block;
 }
 
 .task-delete-btn:hover {
@@ -112,19 +207,34 @@
     box-shadow: var(--shadow-sm);
 }
 
+.task-delete-btn:focus {
+    outline: 2px solid var(--primary-color);
+    outline-offset: 2px;
+}
+
 .task-item-title {
-    margin: 0 0 0.5rem 0;
+    margin: 0 0 0.75rem 0;
+    margin-right: 100px;
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    line-height: 1.3;
+    letter-spacing: -0.01em;
 }
 
 .task-item-title.completed {
     text-decoration: line-through;
     color: var(--text-secondary);
+    opacity: 0.7;
 }
 
 .task-item-description {
-    margin: 0;
+    margin: 0 0 0.5rem 0;
     color: var(--text-secondary);
-    font-size: 0.9rem;
+    font-size: 0.875rem;
+    line-height: 1.6;
+    opacity: 0.85;
+    font-weight: 400;
 }
 
 .task-item-date {
@@ -132,18 +242,31 @@
 }
 
 .task-status-badge {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
     color: white;
-    padding: 0.25rem 0.75rem;
-    border-radius: 4px;
-    font-size: 0.85rem;
+    padding: 0.375rem 0.875rem;
+    border-radius: 6px;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    box-shadow: var(--shadow-sm);
+    z-index: 10;
+    transition: all 0.3s ease;
 }
 
 .task-status-badge.completed {
-    background: var(--success);
+    background: #059669;
 }
 
 .task-status-badge.pending {
-    background: var(--text-secondary);
+    background: #475569;
+}
+
+.task-item:hover .task-status-badge {
+    box-shadow: var(--shadow-md);
+    transform: scale(1.05);
 }
 
 .empty-tasks-message {
@@ -179,21 +302,53 @@
         font-size: 0.95rem;
     }
 
+    .task-status-badge {
+        top: 0.75rem;
+        right: 0.75rem;
+        font-size: 0.75rem;
+        padding: 0.3rem 0.65rem;
+    }
+
+    .task-item {
+        padding: 1rem;
+        padding-top: 1.25rem;
+    }
+
+    .task-item-title {
+        font-size: 1.125rem;
+        margin-right: 80px;
+    }
+
     .task-item-content {
         flex-direction: column;
-        gap: 0.5rem;
+        gap: 0.75rem;
     }
 
     .task-item-actions {
-        flex-direction: row;
         width: 100%;
-        justify-content: space-between;
+        align-items: stretch;
+    }
+
+    .task-actions-group {
+        flex-direction: row;
+        gap: 0.5rem;
+        width: 100%;
     }
 
     .task-edit-btn,
     .task-delete-btn {
         flex: 1;
-        text-align: center;
-        max-width: 120px;
+        min-width: 0;
+        font-size: 0.875rem;
+        padding: 0.625rem 0.75rem;
+    }
+
+    .task-checkbox {
+        width: 1.125rem;
+        height: 1.125rem;
+    }
+
+    .task-toggle-form {
+        gap: 0.625rem;
     }
 }

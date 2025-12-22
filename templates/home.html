@@ -20,11 +20,30 @@
                 <ul class="task-list">
                     {% for task in tasks %}
                         <li class="task-item {% if task.completed %}completed{% endif %}">
+                            {# Status badge moved to top level for absolute positioning #}
+                            <span class="task-status-badge {% if task.completed %}completed{% else %}pending{% endif %}">
+                                {% if task.completed %}✓ Done{% else %}Pending{% endif %}
+                            </span>
+
                             <div class="task-item-content">
                                 <div class="task-item-text">
-                                    <h4 class="task-item-title {% if task.completed %}completed{% endif %}">
-                                        {{ task.title }}
-                                    </h4>
+                                    {# Checkbox form for quick status toggle #}
+                                    <form method="post" action="{% url 'task_toggle' task.pk %}" class="task-toggle-form">
+                                        {% csrf_token %}
+                                        <input
+                                            type="checkbox"
+                                            id="task-{{ task.pk }}"
+                                            class="task-checkbox"
+                                            {% if task.completed %}checked{% endif %}
+                                            onchange="this.form.submit()"
+                                        >
+                                        <label for="task-{{ task.pk }}" class="task-checkbox-label">
+                                            <h4 class="task-item-title {% if task.completed %}completed{% endif %}">
+                                                {{ task.title }}
+                                            </h4>
+                                        </label>
+                                    </form>
+
                                     {% if task.description %}
                                         <p class="task-item-description">
                                             {{ task.description }}
@@ -34,14 +53,14 @@
                                         Created: {{ task.created_at|date:"M d, Y, h:i" }}
                                     </small>
                                 </div>
+                                {# Action buttons wrapped in new group container #}
                                 <div class="task-item-actions">
-                                    <span class="task-status-badge {% if task.completed %}completed{% else %}pending{% endif %}">
-                                        {% if task.completed %}✓ Done{% else %}Pending{% endif %}
-                                    </span>
-                                    {# Edit button with task.pk (primary key) passed to URL #}
-                                    {# {% url 'task_update' task.pk %} generates: /tasks/5/edit/ #}
-                                    <a href="{% url 'task_update' task.pk %}" class="task-edit-btn">✏️ Edit</a>
-                                    <a href="{% url 'task_delete' task.pk %}" class="task-delete-btn">🗑️ Delete</a>
+                                    <div class="task-actions-group">
+                                        {# Edit button with task.pk (primary key) passed to URL #}
+                                        {# {% url 'task_update' task.pk %} generates: /tasks/5/edit/ #}
+                                        <a href="{% url 'task_update' task.pk %}" class="task-edit-btn">✏️ Edit</a>
+                                        <a href="{% url 'task_delete' task.pk %}" class="task-delete-btn">🗑️ Delete</a>
+                                    </div>
                                 </div>
                             </div>
                         </li>
